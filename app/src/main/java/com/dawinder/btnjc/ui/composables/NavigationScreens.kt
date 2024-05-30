@@ -17,12 +17,13 @@ import com.dawinder.btnjc.ui.composables.tabs.SignInScreen
  * @param navController The navigation controller used for handling navigation between screens.
  */
 @Composable
-fun NavigationScreens(navController: NavHostController) {
+fun NavigationScreens(navController: NavHostController, onSignIn: () -> Unit) {
     NavHost(navController, startDestination = NavItem.SignIn.path) {
         composable(NavItem.Home.path) { HomeScreen() }
         composable(NavItem.Search.path) { SearchScreen() }
         composable(NavItem.List.path) { ListScreen() }
         composable(NavItem.Profile.path) { ProfileScreen() }
-        composable(NavItem.SignIn.path) { SignInScreen() }
+        composable(NavItem.SignIn.path) { SignInScreen(onSignIn) }
     }
 }
+

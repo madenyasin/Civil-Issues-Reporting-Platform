@@ -13,8 +13,8 @@ import androidx.navigation.NavHostController
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(navController: NavHostController, onSignIn: () -> Unit) {
     Scaffold(bottomBar = {
         BottomAppBar { BottomNavigationBar(navController = navController) }
-    }) { NavigationScreens(navController = navController) }
+    }) { NavigationScreens(navController = navController, onSignIn) }
 }
