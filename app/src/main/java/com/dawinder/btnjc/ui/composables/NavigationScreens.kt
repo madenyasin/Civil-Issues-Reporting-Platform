@@ -9,6 +9,7 @@ import com.dawinder.btnjc.ui.composables.tabs.HomeScreen
 import com.dawinder.btnjc.ui.composables.tabs.ListScreen
 import com.dawinder.btnjc.ui.composables.tabs.ProfileScreen
 import com.dawinder.btnjc.ui.composables.tabs.SearchScreen
+import com.dawinder.btnjc.ui.composables.tabs.SignInScreen
 
 /**
  * Composable function that defines the navigation screens and their corresponding destinations.
@@ -17,10 +18,11 @@ import com.dawinder.btnjc.ui.composables.tabs.SearchScreen
  */
 @Composable
 fun NavigationScreens(navController: NavHostController) {
-    NavHost(navController, startDestination = NavItem.Home.path) {
+    NavHost(navController, startDestination = NavItem.SignIn.path) {
         composable(NavItem.Home.path) { HomeScreen() }
         composable(NavItem.Search.path) { SearchScreen() }
         composable(NavItem.List.path) { ListScreen() }
         composable(NavItem.Profile.path) { ProfileScreen() }
+        composable(NavItem.SignIn.path) { SignInScreen() }
     }
 }

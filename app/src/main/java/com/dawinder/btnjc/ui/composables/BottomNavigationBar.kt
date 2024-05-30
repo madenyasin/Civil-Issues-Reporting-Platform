@@ -19,7 +19,13 @@ import com.dawinder.btnjc.nav.NavItem
  */
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    val navItems = listOf(NavItem.Home, NavItem.Search, NavItem.List, NavItem.Profile)
+    val navItems = listOf(
+        NavItem.SignIn,
+        NavItem.Home,
+        NavItem.Search,
+        NavItem.List,
+        NavItem.Profile
+    )
     var selectedItem by rememberSaveable { mutableStateOf(0) }
 
     NavigationBar {

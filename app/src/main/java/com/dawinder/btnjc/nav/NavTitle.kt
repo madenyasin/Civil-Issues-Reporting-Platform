@@ -5,4 +5,5 @@ object NavTitle {
     const val SEARCH = "Search"
     const val LIST = "List"
     const val PROFILE = "Profile"
+    const val SIGN_IN = "Sign In"
 }
