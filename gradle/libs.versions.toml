@@ -10,6 +10,8 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 plugin-android-app = "8.4.1"
 plugin-kotlin = "1.8.10"
+google-gms-google-services = "4.4.1"
+firebase-auth = "23.0.0"
 
 [libraries]
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
@@ -29,12 +31,14 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "plugin-android-app" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "plugin-kotlin" }
 daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-android" }
 kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "plugin-kotlin" }
+googleGmsGoogleServices = { id = "com.google.gms.google-services", version.ref = "google-gms-google-services" }
 
 [bundles]
 compose = [

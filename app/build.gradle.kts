@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.kotlinKapt)
     alias(libs.plugins.daggerHilt)
+    alias(libs.plugins.googleGmsGoogleServices)
 }
 
 android {
@@ -10,7 +11,7 @@ android {
     compileSdk = 34
     defaultConfig {
         applicationId = "com.dawinder.btnjc"
-        minSdk = 21
+        minSdk = 23
         //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
@@ -53,6 +54,7 @@ android {
 dependencies {
     // Jetpack Compose Platform
     implementation(platform(libs.compose.bom))
+    implementation(libs.firebase.auth)
     androidTestImplementation(platform(libs.compose.bom))
 
     // Jetpack Compose Libraries with BOM version
