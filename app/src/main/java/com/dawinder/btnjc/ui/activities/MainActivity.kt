@@ -84,6 +84,9 @@ class MainActivity : ComponentActivity() {
                 Log.e(TAG, e.localizedMessage)
             }
     }
+    private fun signOut() {
+        Firebase.auth.signOut()
+    }
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -105,10 +108,12 @@ class MainActivity : ComponentActivity() {
                                         val user = auth.currentUser
                                         //updateUI(user)
                                         Log.d("TAGxxx", "signInWithCredential:success")
+                                        Log.d("TAGxxx", "${user?.displayName}")
                                     } else {
                                         // If sign in fails, display a message to the user
                                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                                         //updateUI(null)
+
                                         Log.d("TAGxxx", "signInWithCredential:failure")
                                     }
                                 }
@@ -131,6 +136,10 @@ class MainActivity : ComponentActivity() {
         // Check if user is signed in and update UI accordingly
         val currentUser = auth.currentUser
         Log.d("TAGxxx", "Current User: $currentUser")
+    }
+
+    private fun getCurrentUserName(firebaseAuth: FirebaseAuth): String{
+        return firebaseAuth.currentUser?.displayName.toString()
     }
 
 
