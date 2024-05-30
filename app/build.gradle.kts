@@ -7,10 +7,11 @@ plugins {
 
 android {
     namespace = "com.dawinder.btnjc"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.dawinder.btnjc"
         minSdk = 21
+        //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"

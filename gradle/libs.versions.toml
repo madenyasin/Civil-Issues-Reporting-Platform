@@ -8,7 +8,7 @@ hilt-android = "2.46"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
-plugin-android-app = "8.2.2"
+plugin-android-app = "8.4.1"
 plugin-kotlin = "1.8.10"
 
 [libraries]
