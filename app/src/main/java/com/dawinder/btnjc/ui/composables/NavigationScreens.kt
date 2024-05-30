@@ -21,12 +21,13 @@ import com.dawinder.btnjc.ui.data.UserData
 fun NavigationScreens(
     navController: NavHostController,
     onSignInClick: () -> Unit,
+    userData: UserData
 ) {
     NavHost(navController, startDestination = NavItem.SignIn.path) {
         composable(NavItem.Home.path) { HomeScreen() }
         composable(NavItem.Search.path) { SearchScreen() }
         composable(NavItem.List.path) { ListScreen() }
-        composable(NavItem.Profile.path) { ProfileScreen() }
+        composable(NavItem.Profile.path) { ProfileScreen(userData) }
         composable(NavItem.SignIn.path) { SignInScreen(onSignInClick) }
     }
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.dawinder.btnjc.R
 import com.dawinder.btnjc.ui.composables.MainScreen
+import com.dawinder.btnjc.ui.data.UserData
 import com.dawinder.btnjc.ui.theme.BottomTabNavigationJetpackComposeTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -61,7 +62,15 @@ class MainActivity : ComponentActivity() {
             BottomTabNavigationJetpackComposeTheme {
                 val navController = rememberNavController()
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    MainScreen(navController = navController, { signIn() })
+                    MainScreen(
+                        navController = navController,
+                        { signIn() },
+                        UserData(
+                            userId = Firebase.auth.currentUser?.uid ?: "Unknown",
+                            username = Firebase.auth.currentUser?.displayName,
+                            profilePictureUrl = Firebase.auth.currentUser?.photoUrl.toString()
+                        )
+                    )
                 }
             }
         }
@@ -84,9 +93,11 @@ class MainActivity : ComponentActivity() {
                 Log.e(TAG, e.localizedMessage)
             }
     }
+
     private fun signOut() {
         Firebase.auth.signOut()
     }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -118,6 +129,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                         }
+
                         else -> {
                             // Shouldn't happen
                             Log.d(TAG, "No ID token!")
@@ -138,7 +150,7 @@ class MainActivity : ComponentActivity() {
         Log.d("TAGxxx", "Current User: $currentUser")
     }
 
-    private fun getCurrentUserName(firebaseAuth: FirebaseAuth): String{
+    private fun getCurrentUserName(firebaseAuth: FirebaseAuth): String {
         return firebaseAuth.currentUser?.displayName.toString()
     }
 

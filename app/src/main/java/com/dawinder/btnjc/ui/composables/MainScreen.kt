@@ -17,6 +17,7 @@ import com.dawinder.btnjc.ui.data.UserData
 fun MainScreen(
     navController: NavHostController,
     onSignInClick: () -> Unit,
+    userData: UserData
 ) {
     Scaffold(bottomBar = {
         BottomAppBar { BottomNavigationBar(navController = navController) }
@@ -24,6 +25,7 @@ fun MainScreen(
         NavigationScreens(
             navController = navController,
             onSignInClick,
+            userData
         )
     }
 }
