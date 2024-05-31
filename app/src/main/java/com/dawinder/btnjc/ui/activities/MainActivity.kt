@@ -25,6 +25,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+const val USER = "user-info"
 class MainActivity : ComponentActivity() {
     /**
      * Called when the activity is starting. This is where most initialization should go:
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
 
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,14 +120,14 @@ class MainActivity : ComponentActivity() {
                                         Log.d(TAG, "signInWithCredential:success")
                                         val user = auth.currentUser
                                         //updateUI(user)
-                                        Log.d("TAGxxx", "signInWithCredential:success")
-                                        Log.d("TAGxxx", "${user?.displayName}")
+                                        Log.d(USER, "signInWithCredential:success")
+                                        Log.d(USER, "${user?.displayName}")
                                     } else {
                                         // If sign in fails, display a message to the user
                                         Log.w(TAG, "signInWithCredential:failure", task.exception)
                                         //updateUI(null)
 
-                                        Log.d("TAGxxx", "signInWithCredential:failure")
+                                        Log.d(USER, "signInWithCredential:failure")
                                     }
                                 }
                         }
@@ -147,7 +149,7 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         // Check if user is signed in and update UI accordingly
         val currentUser = auth.currentUser
-        Log.d("TAGxxx", "Current User: $currentUser")
+        Log.d(USER, "Current User: $currentUser")
     }
 
     private fun getCurrentUserName(firebaseAuth: FirebaseAuth): String {
