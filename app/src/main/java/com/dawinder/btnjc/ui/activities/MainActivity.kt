@@ -26,6 +26,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 const val USER = "user-info"
+
 class MainActivity : ComponentActivity() {
     /**
      * Called when the activity is starting. This is where most initialization should go:
@@ -40,7 +41,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
 
-    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
