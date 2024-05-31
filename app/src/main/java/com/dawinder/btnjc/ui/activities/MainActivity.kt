@@ -79,8 +79,9 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MainScreen(
                         navController = navController,
-                        { signIn() },
-                        userData
+                        onSignInClick = { signIn() },
+                        userData = userData,
+                        onSignOutClick = { signOut() }
                     )
                 }
             }
@@ -107,6 +108,7 @@ class MainActivity : ComponentActivity() {
 
     private fun signOut() {
         Firebase.auth.signOut()
+        Log.d(USER,auth.currentUser?.displayName.toString())
     }
 
     @Deprecated("Deprecated in Java")
@@ -161,11 +163,6 @@ class MainActivity : ComponentActivity() {
         viewModel.updateUser(auth.currentUser)
         Log.d(USER, "Current User: $auth.currentUser")
     }
-
-    private fun getCurrentUserName(firebaseAuth: FirebaseAuth): String {
-        return firebaseAuth.currentUser?.displayName.toString()
-    }
-
 
 }
 
