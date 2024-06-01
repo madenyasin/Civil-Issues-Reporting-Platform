@@ -36,7 +36,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if(userData.profilePictureUrl != null) {
+        if (userData.profilePictureUrl != null) {
             AsyncImage(
                 model = userData.profilePictureUrl,
                 contentDescription = "Profile picture",
@@ -47,7 +47,7 @@ fun ProfileScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if(userData.username != null) {
+        if (userData.username != null) {
             Text(
                 text = userData.username,
                 textAlign = TextAlign.Center,
@@ -60,7 +60,4 @@ fun ProfileScreen(
             Text(text = "Sign Out")
         }
     }
-
-
-
 }
