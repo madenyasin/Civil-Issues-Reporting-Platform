@@ -1,11 +1,14 @@
 package com.dawinder.btnjc.ui.activities
 
+import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
@@ -14,6 +17,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
@@ -53,6 +58,15 @@ class MainActivity : ComponentActivity() {
         AuthViewModelFactory(Firebase.auth)
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.d(TAG, "Location permission granted")
+            } else {
+                Log.d(TAG, "Location permission denied")
+            }
+        }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +86,9 @@ class MainActivity : ComponentActivity() {
                     .build()
             )
             .build()
+        // Check for location permission
+        checkLocationPermission()
+
         setContent {
             BottomTabNavigationJetpackComposeTheme {
                 val navController = rememberNavController()
@@ -88,7 +105,31 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun checkLocationPermission() {
+        when {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                Log.d(TAG, "Location permission already granted")
+            }
 
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) -> {
+                // Show an explanation to the user
+                Log.d(TAG, "Showing location permission rationale")
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+
+            else -> {
+                // Directly ask for the permission
+                Log.d(TAG, "Requesting location permission")
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+    }
     private fun signIn() {
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener(this) { result ->
