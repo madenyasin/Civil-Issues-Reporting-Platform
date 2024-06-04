@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -30,6 +31,8 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -54,6 +57,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private val viewModel by viewModels<AuthViewModel> {
         AuthViewModelFactory(Firebase.auth)
     }
@@ -70,6 +75,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
         // Initialize Firebase Auth
         auth = Firebase.auth
 
@@ -98,7 +106,8 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         onSignInClick = { signIn() },
                         userData = userData,
-                        onSignOutClick = { signOut() }
+                        onSignOutClick = { signOut() },
+                        fusedLocationClient = fusedLocationClient
                     )
                 }
             }

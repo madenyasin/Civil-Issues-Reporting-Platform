@@ -79,6 +79,7 @@ dependencies {
     // Jetpack Compose Platform
     implementation(platform(libs.compose.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.play.services.location)
     androidTestImplementation(platform(libs.compose.bom))
 
     // Jetpack Compose Libraries with BOM version
