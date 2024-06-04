@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -53,7 +52,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
 
     private val REQ_ONE_TAP = 2  // Unique request code for sign-in
-    private var showOneTapUI = true
+
+    //private var showOneTapUI = true
     private lateinit var oneTapClient: SignInClient
     private lateinit var signInRequest: BeginSignInRequest
 
@@ -153,7 +153,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             .addOnFailureListener(this) { e ->
-                Log.e(TAG, e.localizedMessage)
+                e.localizedMessage?.let { Log.e(TAG, it) }
             }
     }
 
