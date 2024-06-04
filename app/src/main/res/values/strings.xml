@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">BottomTabNavigation-JetpackCompose</string>
+    <string name="app_name">Civil Issues Report</string>
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="list">List</string>
     <string name="profile">Profile</string>
     <string name="your_web_client_id">140989619404-9svpsvltp6oaec1p8bdv6m7kpkhin4d8.apps.googleusercontent.com</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
 </resources>
