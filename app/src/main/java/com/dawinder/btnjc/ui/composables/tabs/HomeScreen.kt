@@ -3,12 +3,17 @@ package com.dawinder.btnjc.ui.composables.tabs
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +36,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 /**
  * Composable function that represents the home screen of the application.
  */
+
 @SuppressLint("MissingPermission")
 @Composable
 fun HomeScreen(
@@ -39,11 +45,11 @@ fun HomeScreen(
 
     // Write a message to the database
     val database = Firebase.database
-    val latitudeRef = database.getReference("latitude")
-    val longitudeRef = database.getReference("longitude")
+    val postsRef = database.getReference("posts")
 
     // State to hold the user's current location
     val userLocationState = remember { mutableStateOf<LatLng?>(null) }
+    val showDialog = remember { mutableStateOf(false) }
 
     // Function to get the current location and update the state
     val updateLocation: () -> Unit = {
@@ -51,10 +57,6 @@ fun HomeScreen(
             location?.let {
                 val latLng = LatLng(it.latitude, it.longitude)
                 userLocationState.value = latLng
-
-                //send to firebase location
-                latitudeRef.setValue(it.latitude)
-                longitudeRef.setValue(it.longitude)
 
                 Log.d("Location", "Lat: ${it.latitude}, Long: ${it.longitude}")
             }
@@ -72,8 +74,9 @@ fun HomeScreen(
         )
         FloatingActionButton(
             onClick = {
-
+                // Update location before showing the dialog
                 updateLocation()
+                showDialog.value = true
             },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -82,6 +85,18 @@ fun HomeScreen(
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
         }
 
+        if (showDialog.value) {
+            PostCreationDialog(
+                userLocation = userLocationState.value,
+                onDismiss = { showDialog.value = false },
+                onPost = { title, description, lat, long ->
+                    // Send the post data to Firebase
+                    val newPostRef = postsRef.push()
+                    newPostRef.setValue(Post(title, description, lat, long))
+                    showDialog.value = false
+                }
+            )
+        }
     }
 }
 
@@ -104,3 +119,55 @@ fun MyMap(modifier: Modifier) {
         )
     }
 }
+
+@Composable
+fun PostCreationDialog(
+    userLocation: LatLng?,
+    onDismiss: () -> Unit,
+    onPost: (String, String, Double?, Double?) -> Unit
+) {
+    val title = remember { mutableStateOf("") }
+    val description = remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Create Post") },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = title.value,
+                    onValueChange = { title.value = it },
+                    label = { Text("Title") }
+                )
+                OutlinedTextField(
+                    value = description.value,
+                    onValueChange = { description.value = it },
+                    label = { Text("Description") }
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onPost(title.value, description.value, userLocation?.latitude, userLocation?.longitude)
+                }
+            ) {
+                Text("Send")
+            }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
+data class Post(
+    val title: String = "",
+    val description: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null
+)
