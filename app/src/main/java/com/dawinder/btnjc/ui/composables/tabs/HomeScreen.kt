@@ -73,9 +73,9 @@ fun HomeScreen(
 
 @Composable
 fun MyMap(modifier: Modifier) {
-    val singapore = LatLng(1.35, 103.87)
+    val kutahya = LatLng(39.47, 29.90)
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(singapore, 10f)
+        position = CameraPosition.fromLatLngZoom(kutahya, 10f)
     }
     val uiSettings by remember { mutableStateOf(MapUiSettings()) }
     GoogleMap(
@@ -84,7 +84,7 @@ fun MyMap(modifier: Modifier) {
         uiSettings = uiSettings.copy(zoomControlsEnabled = false)
     ) {
         Marker(
-            state = MarkerState(position = singapore),
+            state = MarkerState(position = kutahya),
             title = "Singapore",
             snippet = "Marker in Singapore"
         )
