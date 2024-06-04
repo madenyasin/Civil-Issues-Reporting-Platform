@@ -43,7 +43,6 @@ fun HomeScreen(
     userData: UserData,
     fusedLocationClient: FusedLocationProviderClient,
 ) {
-
     // Write a message to the database
     val database = Firebase.database
     val postsRef = database.getReference("posts")
@@ -58,7 +57,6 @@ fun HomeScreen(
             location?.let {
                 val latLng = LatLng(it.latitude, it.longitude)
                 userLocationState.value = latLng
-
                 Log.d("Location", "Lat: ${it.latitude}, Long: ${it.longitude}")
             }
         }
