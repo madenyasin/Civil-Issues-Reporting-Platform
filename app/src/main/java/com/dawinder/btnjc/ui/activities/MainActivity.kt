@@ -130,6 +130,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     private fun signIn() {
         oneTapClient.beginSignIn(signInRequest)
             .addOnSuccessListener(this) { result ->
@@ -149,7 +150,7 @@ class MainActivity : ComponentActivity() {
 
     private fun signOut() {
         Firebase.auth.signOut()
-        Log.d(USER,auth.currentUser?.displayName.toString())
+        Log.d(USER, auth.currentUser?.displayName.toString())
     }
 
     @Deprecated("Deprecated in Java")
@@ -210,7 +211,7 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    val navController = rememberNavController()
+    //val navController = rememberNavController()
     BottomTabNavigationJetpackComposeTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             //MainScreen(navController = navController)

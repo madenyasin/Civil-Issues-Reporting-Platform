@@ -70,6 +70,9 @@ secrets {
 
 
 dependencies {
+    // Android Maps Compose composables for the Maps SDK for Android
+    implementation("com.google.maps.android:maps-compose:4.4.1")
+
     // Maps SDK for Android
     implementation("com.google.android.gms:play-services-maps:18.2.0")
 
