@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.dawinder.btnjc.ui.data.UserData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -36,10 +37,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 /**
  * Composable function that represents the home screen of the application.
  */
-
 @SuppressLint("MissingPermission")
 @Composable
 fun HomeScreen(
+    userData: UserData,
     fusedLocationClient: FusedLocationProviderClient,
 ) {
 
@@ -86,16 +87,19 @@ fun HomeScreen(
         }
 
         if (showDialog.value) {
-            PostCreationDialog(
-                userLocation = userLocationState.value,
-                onDismiss = { showDialog.value = false },
-                onPost = { title, description, lat, long ->
-                    // Send the post data to Firebase
-                    val newPostRef = postsRef.push()
-                    newPostRef.setValue(Post(title, description, lat, long))
-                    showDialog.value = false
-                }
-            )
+            userData.username?.let {
+                PostCreationDialog(
+                    userName = it,
+                    userLocation = userLocationState.value,
+                    onDismiss = { showDialog.value = false },
+                    onPost = { title, description, userName, lat, long ->
+                        // Send the post data to Firebase
+                        val newPostRef = postsRef.push()
+                        newPostRef.setValue(Post(title, description, userName, lat, long))
+                        showDialog.value = false
+                    }
+                )
+            }
         }
     }
 }
@@ -122,9 +126,10 @@ fun MyMap(modifier: Modifier) {
 
 @Composable
 fun PostCreationDialog(
+    userName: String,
     userLocation: LatLng?,
     onDismiss: () -> Unit,
-    onPost: (String, String, Double?, Double?) -> Unit
+    onPost: (String, String, String, Double?, Double?) -> Unit
 ) {
     val title = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
@@ -149,7 +154,7 @@ fun PostCreationDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onPost(title.value, description.value, userLocation?.latitude, userLocation?.longitude)
+                    onPost(title.value, description.value, userName, userLocation?.latitude, userLocation?.longitude)
                 }
             ) {
                 Text("Send")
@@ -168,6 +173,8 @@ fun PostCreationDialog(
 data class Post(
     val title: String = "",
     val description: String = "",
+    val userName: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null
 )
+

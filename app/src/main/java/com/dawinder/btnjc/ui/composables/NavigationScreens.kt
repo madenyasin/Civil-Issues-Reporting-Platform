@@ -29,7 +29,7 @@ fun NavigationScreens(
     fusedLocationClient: FusedLocationProviderClient,
 ) {
     NavHost(navController, startDestination = NavItem.Home.path) {
-        composable(NavItem.Home.path) { HomeScreen(fusedLocationClient) }
+        composable(NavItem.Home.path) { HomeScreen(userData, fusedLocationClient) }
         composable(NavItem.Search.path) { SearchScreen() }
         composable(NavItem.List.path) { ListScreen() }
         composable(NavItem.Profile.path) { ProfileScreen(userData, onSignOutClick) }
