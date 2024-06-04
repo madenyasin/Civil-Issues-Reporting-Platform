@@ -1,5 +1,5 @@
 package com.dawinder.btnjc.nav
 
 enum class NavPath {
-    HOME, SEARCH, LIST, PROFILE, SIGN_IN
+    MAP, LIST, PROFILE, SIGN_IN
 }

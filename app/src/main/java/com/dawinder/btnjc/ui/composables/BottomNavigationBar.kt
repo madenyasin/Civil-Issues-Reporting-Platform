@@ -21,8 +21,7 @@ import com.dawinder.btnjc.nav.NavItem
 fun BottomNavigationBar(navController: NavHostController) {
     val navItems = listOf(
         NavItem.SignIn,
-        NavItem.Home,
-        NavItem.Search,
+        NavItem.Map,
         NavItem.List,
         NavItem.Profile
     )
