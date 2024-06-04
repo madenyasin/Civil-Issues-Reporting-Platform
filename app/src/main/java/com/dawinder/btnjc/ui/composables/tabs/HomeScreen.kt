@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
@@ -34,6 +36,12 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun HomeScreen(
     fusedLocationClient: FusedLocationProviderClient,
 ) {
+
+    // Write a message to the database
+    val database = Firebase.database
+    val latitudeRef = database.getReference("latitude")
+    val longitudeRef = database.getReference("longitude")
+
     // State to hold the user's current location
     val userLocationState = remember { mutableStateOf<LatLng?>(null) }
 
@@ -43,6 +51,11 @@ fun HomeScreen(
             location?.let {
                 val latLng = LatLng(it.latitude, it.longitude)
                 userLocationState.value = latLng
+
+                //send to firebase location
+                latitudeRef.setValue(it.latitude)
+                longitudeRef.setValue(it.longitude)
+
                 Log.d("Location", "Lat: ${it.latitude}, Long: ${it.longitude}")
             }
         }
@@ -59,6 +72,7 @@ fun HomeScreen(
         )
         FloatingActionButton(
             onClick = {
+
                 updateLocation()
             },
             modifier = Modifier
