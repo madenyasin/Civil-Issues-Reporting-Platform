@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.dawinder.btnjc.nav.NavItem
-import com.dawinder.btnjc.ui.composables.tabs.HomeScreen
+import com.dawinder.btnjc.ui.composables.tabs.MapScreen
 import com.dawinder.btnjc.ui.composables.tabs.ListScreen
 import com.dawinder.btnjc.ui.composables.tabs.ProfileScreen
 import com.dawinder.btnjc.ui.composables.tabs.SignInScreen
@@ -26,7 +26,7 @@ fun NavigationScreens(
     fusedLocationClient: FusedLocationProviderClient,
 ) {
     NavHost(navController, startDestination = NavItem.SignIn.path) {
-        composable(NavItem.Map.path) { HomeScreen(userData, fusedLocationClient) }
+        composable(NavItem.Map.path) { MapScreen(userData, fusedLocationClient) }
         composable(NavItem.List.path) { ListScreen() }
         composable(NavItem.Profile.path) { ProfileScreen(userData, onSignOutClick) }
         composable(NavItem.SignIn.path) { SignInScreen(onSignInClick) }
