@@ -4,20 +4,29 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -36,11 +45,13 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 
 /**
  * Composable function that represents the home screen of the application.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun HomeScreen(
@@ -57,6 +68,13 @@ fun HomeScreen(
 
     // State to hold the list of posts with their positions
     val postsWithPositions = remember { mutableStateOf<Map<LatLng, Post>>(emptyMap()) }
+
+    // State to manage the bottom sheet
+    val bottomSheetState = rememberModalBottomSheetState()
+    val selectedPost = remember { mutableStateOf<Post?>(null) }
+
+    // Scope for launching coroutines
+    val coroutineScope = rememberCoroutineScope()
 
     // Function to get the current location and update the state
     val updateLocation: () -> Unit = {
@@ -96,7 +114,14 @@ fun HomeScreen(
     ) {
         MyMap(
             modifier = Modifier.fillMaxSize(),
-            postsWithPositions = postsWithPositions.value
+            postsWithPositions = postsWithPositions.value,
+            onMarkerClick = { post ->
+                selectedPost.value = post
+                coroutineScope.launch {
+                    bottomSheetState.show()
+
+                }
+            }
         )
         FloatingActionButton(
             onClick = {
@@ -126,13 +151,37 @@ fun HomeScreen(
                 )
             }
         }
+        selectedPost.value?.let { post ->
+            LaunchedEffect(bottomSheetState, selectedPost.value) {
+                coroutineScope.launch {
+                    if (bottomSheetState.isVisible) {
+                        bottomSheetState.hide()
+                    } else {
+                        bottomSheetState.show()
+                    }
+                }
+            }
+            ModalBottomSheet(
+                sheetState = bottomSheetState,
+                onDismissRequest = {
+                    coroutineScope.launch {
+                        bottomSheetState.hide()
+                        selectedPost.value = null
+                    }
+                }
+            ) {
+                PostDetails(post = post)
+            }
+        }
+
     }
 }
 
 @Composable
 fun MyMap(
     modifier: Modifier,
-    postsWithPositions: Map<LatLng, Post>
+    postsWithPositions: Map<LatLng, Post>,
+    onMarkerClick: (Post) -> Unit
 ) {
     val kutahya = LatLng(39.47, 29.90)
     val cameraPositionState = rememberCameraPositionState {
@@ -147,11 +196,14 @@ fun MyMap(
         properties = MapProperties(isMyLocationEnabled = true)
     ) {
         // Add markers from the posts with positions
-        postsWithPositions.forEach { (position, post) ->
+        postsWithPositions.forEach { (latLng, post) ->
             Marker(
-                state = MarkerState(position = position),
+                state = MarkerState(position = latLng),
                 title = post.title,
-                snippet = post.description
+                onClick = {
+                    onMarkerClick(post)
+                    true // Return true to indicate that the click has been handled
+                }
             )
         }
     }
@@ -217,3 +269,19 @@ data class Post(
     val longitude: Double? = null
 )
 
+@Composable
+fun PostDetails(post: Post) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+        ,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = post.title, style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = post.description, style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Posted by: ${post.userName}", style = MaterialTheme.typography.bodySmall)
+    }
+}

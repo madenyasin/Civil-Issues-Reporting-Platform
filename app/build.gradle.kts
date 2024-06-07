@@ -70,6 +70,8 @@ secrets {
 
 
 dependencies {
+    // for bottom sheet
+    implementation ("com.google.android.material:material:1.5.0")
     // Android Maps Compose composables for the Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.4.1")
 
