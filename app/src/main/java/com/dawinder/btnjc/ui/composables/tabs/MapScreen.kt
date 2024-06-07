@@ -26,12 +26,16 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Firebase
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlin.math.ln
 
 
 /**
@@ -51,6 +55,9 @@ fun HomeScreen(
     val userLocationState = remember { mutableStateOf<LatLng?>(null) }
     val showDialog = remember { mutableStateOf(false) }
 
+    // State to hold the list of markers
+    val markerPositions = remember { mutableStateOf<List<LatLng>>(emptyList()) }
+
     // Function to get the current location and update the state
     val updateLocation: () -> Unit = {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -62,14 +69,36 @@ fun HomeScreen(
         }
     }
 
+    // Fetch posts from Firebase and update marker positions
+    postsRef.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            val positions = snapshot.children.mapNotNull { postSnapshot ->
+                val post = postSnapshot.getValue(Post::class.java)
+                post?.latitude?.let { lat ->
+                    post.longitude?.let { lng ->
+                        LatLng(lat, lng)
+                    }
+                }
+            }
+            markerPositions.value = positions
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            Log.w("Firebase", "loadPost:onCancelled", error.toException())
+        }
+    })
+
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(bottom = 75.dp)
     ) {
         MyMap(
-            modifier = Modifier
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            markerPositions = markerPositions.value
+
         )
         FloatingActionButton(
             onClick = {
@@ -103,7 +132,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun MyMap(modifier: Modifier) {
+fun MyMap(modifier: Modifier,markerPositions: List<LatLng>) {
     val kutahya = LatLng(39.47, 29.90)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(kutahya, 10f)
@@ -114,11 +143,14 @@ fun MyMap(modifier: Modifier) {
         cameraPositionState = cameraPositionState,
         uiSettings = uiSettings.copy(zoomControlsEnabled = false)
     ) {
-        Marker(
-            state = MarkerState(position = kutahya),
-            title = "Singapore",
-            snippet = "Marker in Singapore"
-        )
+        // Add markers from the list
+        markerPositions.forEach { position ->
+            Marker(
+                state = MarkerState(position = position),
+                title = "Post Location",
+                snippet = "Marker at ${position.latitude}, ${position.longitude}"
+            )
+        }
     }
 }
 

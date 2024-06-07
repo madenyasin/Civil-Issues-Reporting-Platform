@@ -65,7 +65,7 @@ fun ListScreen() {
         fetchPosts()
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier.fillMaxSize().padding(bottom = 75.dp), contentAlignment = Alignment.Center) {
         if (postsState.value.isEmpty()) {
             Text(
                 text = "no_posts_available",
