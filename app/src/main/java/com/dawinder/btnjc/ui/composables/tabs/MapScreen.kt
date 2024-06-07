@@ -31,11 +31,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import kotlin.math.ln
 
 
 /**
@@ -55,8 +55,8 @@ fun HomeScreen(
     val userLocationState = remember { mutableStateOf<LatLng?>(null) }
     val showDialog = remember { mutableStateOf(false) }
 
-    // State to hold the list of markers
-    val markerPositions = remember { mutableStateOf<List<LatLng>>(emptyList()) }
+    // State to hold the list of posts with their positions
+    val postsWithPositions = remember { mutableStateOf<Map<LatLng, Post>>(emptyMap()) }
 
     // Function to get the current location and update the state
     val updateLocation: () -> Unit = {
@@ -68,19 +68,18 @@ fun HomeScreen(
             }
         }
     }
-
-    // Fetch posts from Firebase and update marker positions
+    // Fetch posts from Firebase and update posts with positions
     postsRef.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val positions = snapshot.children.mapNotNull { postSnapshot ->
                 val post = postSnapshot.getValue(Post::class.java)
                 post?.latitude?.let { lat ->
                     post.longitude?.let { lng ->
-                        LatLng(lat, lng)
+                        LatLng(lat, lng) to post
                     }
                 }
-            }
-            markerPositions.value = positions
+            }.toMap()
+            postsWithPositions.value = positions
         }
 
         override fun onCancelled(error: DatabaseError) {
@@ -97,8 +96,7 @@ fun HomeScreen(
     ) {
         MyMap(
             modifier = Modifier.fillMaxSize(),
-            markerPositions = markerPositions.value
-
+            postsWithPositions = postsWithPositions.value
         )
         FloatingActionButton(
             onClick = {
@@ -132,7 +130,10 @@ fun HomeScreen(
 }
 
 @Composable
-fun MyMap(modifier: Modifier,markerPositions: List<LatLng>) {
+fun MyMap(
+    modifier: Modifier,
+    postsWithPositions: Map<LatLng, Post>
+) {
     val kutahya = LatLng(39.47, 29.90)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(kutahya, 10f)
@@ -141,14 +142,16 @@ fun MyMap(modifier: Modifier,markerPositions: List<LatLng>) {
     GoogleMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
-        uiSettings = uiSettings.copy(zoomControlsEnabled = false)
+        uiSettings = uiSettings
+            .copy(zoomControlsEnabled = false),
+        properties = MapProperties(isMyLocationEnabled = true)
     ) {
-        // Add markers from the list
-        markerPositions.forEach { position ->
+        // Add markers from the posts with positions
+        postsWithPositions.forEach { (position, post) ->
             Marker(
                 state = MarkerState(position = position),
-                title = "Post Location",
-                snippet = "Marker at ${position.latitude}, ${position.longitude}"
+                title = post.title,
+                snippet = post.description
             )
         }
     }
@@ -184,7 +187,13 @@ fun PostCreationDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    onPost(title.value, description.value, userName, userLocation?.latitude, userLocation?.longitude)
+                    onPost(
+                        title.value,
+                        description.value,
+                        userName,
+                        userLocation?.latitude,
+                        userLocation?.longitude
+                    )
                 }
             ) {
                 Text("Send")
