@@ -39,6 +39,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
@@ -76,16 +77,25 @@ fun HomeScreen(
     // Scope for launching coroutines
     val coroutineScope = rememberCoroutineScope()
 
+    val cameraPositionState = rememberCameraPositionState()
+
+
     // Function to get the current location and update the state
     val updateLocation: () -> Unit = {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.let {
                 val latLng = LatLng(it.latitude, it.longitude)
                 userLocationState.value = latLng
+                cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 15f)
                 Log.d("Location", "Lat: ${it.latitude}, Long: ${it.longitude}")
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        updateLocation()
+    }
+
     // Fetch posts from Firebase and update posts with positions
     postsRef.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
@@ -119,9 +129,9 @@ fun HomeScreen(
                 selectedPost.value = post
                 coroutineScope.launch {
                     bottomSheetState.show()
-
                 }
-            }
+            },
+            cameraPositionState = cameraPositionState
         )
         FloatingActionButton(
             onClick = {
@@ -181,12 +191,9 @@ fun HomeScreen(
 fun MyMap(
     modifier: Modifier,
     postsWithPositions: Map<LatLng, Post>,
-    onMarkerClick: (Post) -> Unit
+    onMarkerClick: (Post) -> Unit,
+    cameraPositionState: CameraPositionState
 ) {
-    val kutahya = LatLng(39.47, 29.90)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(kutahya, 10f)
-    }
     val uiSettings by remember { mutableStateOf(MapUiSettings()) }
     GoogleMap(
         modifier = modifier,
