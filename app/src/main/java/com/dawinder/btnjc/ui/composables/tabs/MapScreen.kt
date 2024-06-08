@@ -1,56 +1,34 @@
 package com.dawinder.btnjc.ui.composables.tabs
 
 import android.annotation.SuppressLint
+import android.net.Uri
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.dawinder.btnjc.ui.data.UserData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.database
-import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapUiSettings
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
+import java.util.*
 
-
-/**
- * Composable function that represents the home screen of the application.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
@@ -58,28 +36,17 @@ fun MapScreen(
     userData: UserData,
     fusedLocationClient: FusedLocationProviderClient,
 ) {
-    // Write a message to the database
     val database = Firebase.database
     val postsRef = database.getReference("posts")
 
-    // State to hold the user's current location
     val userLocationState = remember { mutableStateOf<LatLng?>(null) }
     val showDialog = remember { mutableStateOf(false) }
-
-    // State to hold the list of posts with their positions
     val postsWithPositions = remember { mutableStateOf<Map<LatLng, Post>>(emptyMap()) }
-
-    // State to manage the bottom sheet
     val bottomSheetState = rememberModalBottomSheetState()
     val selectedPost = remember { mutableStateOf<Post?>(null) }
-
-    // Scope for launching coroutines
     val coroutineScope = rememberCoroutineScope()
-
     val cameraPositionState = rememberCameraPositionState()
 
-
-    // Function to get the current location and update the state
     val updateLocation: () -> Unit = {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             location?.let {
@@ -95,7 +62,6 @@ fun MapScreen(
         updateLocation()
     }
 
-    // Fetch posts from Firebase and update posts with positions
     postsRef.addValueEventListener(object : ValueEventListener {
         override fun onDataChange(snapshot: DataSnapshot) {
             val positions = snapshot.children.mapNotNull { postSnapshot ->
@@ -113,8 +79,6 @@ fun MapScreen(
             Log.w("Firebase", "loadPost:onCancelled", error.toException())
         }
     })
-
-
 
     Box(
         modifier = Modifier
@@ -134,7 +98,6 @@ fun MapScreen(
         )
         FloatingActionButton(
             onClick = {
-                // Update location before showing the dialog
                 updateLocation()
                 showDialog.value = true
             },
@@ -151,10 +114,21 @@ fun MapScreen(
                     userName = it,
                     userLocation = userLocationState.value,
                     onDismiss = { showDialog.value = false },
-                    onPost = { title, description, userName, lat, long ->
-                        // Send the post data to Firebase
-                        val newPostRef = postsRef.push()
-                        newPostRef.setValue(Post(title, description, userName, lat, long))
+                    onPost = { title, description, userName, lat, long, imageUri ->
+                        val storageRef = Firebase.storage.reference
+                        val imageRef = storageRef.child("images/${UUID.randomUUID()}")
+                        imageUri?.let {
+                            imageRef.putFile(it)
+                                .addOnSuccessListener { taskSnapshot ->
+                                    imageRef.downloadUrl.addOnSuccessListener { uri ->
+                                        val newPostRef = postsRef.push()
+                                        newPostRef.setValue(Post(title, description, userName, lat, long, uri.toString()))
+                                    }
+                                }
+                        } ?: run {
+                            val newPostRef = postsRef.push()
+                            newPostRef.setValue(Post(title, description, userName, lat, long, null))
+                        }
                         showDialog.value = false
                     }
                 )
@@ -201,14 +175,13 @@ fun MyMap(
             .copy(zoomControlsEnabled = false),
         properties = MapProperties(isMyLocationEnabled = true)
     ) {
-        // Add markers from the posts with positions
         postsWithPositions.forEach { (latLng, post) ->
             Marker(
                 state = MarkerState(position = latLng),
                 title = post.title,
                 onClick = {
                     onMarkerClick(post)
-                    true // Return true to indicate that the click has been handled
+                    true
                 }
             )
         }
@@ -220,10 +193,17 @@ fun PostCreationDialog(
     userName: String,
     userLocation: LatLng?,
     onDismiss: () -> Unit,
-    onPost: (String, String, String, Double?, Double?) -> Unit
+    onPost: (String, String, String, Double?, Double?, Uri?) -> Unit
 ) {
     val title = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
+    val imageUri = remember { mutableStateOf<Uri?>(null) }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri.value = uri
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -240,6 +220,11 @@ fun PostCreationDialog(
                     onValueChange = { description.value = it },
                     label = { Text("Description") }
                 )
+                Button(
+                    onClick = { imagePickerLauncher.launch("image/*") }
+                ) {
+                    Text("Pick Image")
+                }
             }
         },
         confirmButton = {
@@ -250,7 +235,8 @@ fun PostCreationDialog(
                         description.value,
                         userName,
                         userLocation?.latitude,
-                        userLocation?.longitude
+                        userLocation?.longitude,
+                        imageUri.value
                     )
                 }
             ) {
@@ -272,7 +258,8 @@ data class Post(
     val description: String = "",
     val userName: String = "",
     val latitude: Double? = null,
-    val longitude: Double? = null
+    val longitude: Double? = null,
+    val imageUrl: String? = null
 )
 
 @Composable
@@ -280,8 +267,7 @@ fun PostDetails(post: Post) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-        ,
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = post.title, style = MaterialTheme.typography.titleLarge)
@@ -289,5 +275,13 @@ fun PostDetails(post: Post) {
         Text(text = post.description, style = MaterialTheme.typography.bodyLarge)
         Spacer(modifier = Modifier.height(8.dp))
         Text(text = "Posted by: ${post.userName}", style = MaterialTheme.typography.bodySmall)
+        post.imageUrl?.let {
+            Spacer(modifier = Modifier.height(8.dp))
+            Image(
+                painter = rememberImagePainter(data = it),
+                contentDescription = "Post Image",
+                modifier = Modifier.fillMaxWidth().height(200.dp)
+            )
+        }
     }
 }

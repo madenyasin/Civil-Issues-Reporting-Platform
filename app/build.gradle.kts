@@ -70,6 +70,13 @@ secrets {
 
 
 dependencies {
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+
+    // Add the dependency for the Cloud Storage library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation("com.google.firebase:firebase-storage")
+
     // for bottom sheet
     implementation ("com.google.android.material:material:1.5.0")
     // Android Maps Compose composables for the Maps SDK for Android
