@@ -198,11 +198,13 @@ fun PostCreationDialog(
     val title = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
     val imageUri = remember { mutableStateOf<Uri?>(null) }
+    val imageName = remember { mutableStateOf<String?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         imageUri.value = uri
+        imageName.value = uri?.lastPathSegment
     }
 
     AlertDialog(
@@ -224,6 +226,9 @@ fun PostCreationDialog(
                     onClick = { imagePickerLauncher.launch("image/*") }
                 ) {
                     Text("Pick Image")
+                }
+                imageName.value?.let {
+                    Text(text = "Selected image: $it", style = MaterialTheme.typography.bodySmall)
                 }
             }
         },
