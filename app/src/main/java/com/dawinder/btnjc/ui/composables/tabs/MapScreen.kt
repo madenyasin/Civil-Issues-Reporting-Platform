@@ -330,10 +330,6 @@ fun PostDetails(post: Post) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = post.title, style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = post.description, style = MaterialTheme.typography.bodyLarge)
-        Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             post.userProfilePictureUrl?.let {
                 Image(
@@ -347,6 +343,7 @@ fun PostDetails(post: Post) {
             }
             Text(text = "Posted by: ${post.userName}", style = MaterialTheme.typography.bodySmall)
         }
+        Spacer(modifier = Modifier.height(8.dp))
         post.imageUrl?.let {
             Spacer(modifier = Modifier.height(8.dp))
             Image(
@@ -357,5 +354,9 @@ fun PostDetails(post: Post) {
                     .height(200.dp)
             )
         }
+        Text(text = post.title, style = MaterialTheme.typography.titleLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = post.description, style = MaterialTheme.typography.bodyLarge)
+
     }
 }
