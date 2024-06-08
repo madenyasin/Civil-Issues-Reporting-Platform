@@ -1,6 +1,7 @@
 package com.dawinder.btnjc.ui.composables.tabs
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.dawinder.btnjc.ui.theme.md_theme_light_inversePrimary
 import com.dawinder.btnjc.ui.theme.md_theme_light_onSurface
 import com.dawinder.btnjc.ui.theme.md_theme_light_primary
@@ -30,19 +32,12 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 
-/**
- * Composable function that represents the list screen of the application.
- */
 @Composable
 fun ListScreen() {
-    // Reference to the Firebase database
     val database = Firebase.database
     val postsRef = database.getReference("posts")
-
-    // State to hold the list of posts
     val postsState = remember { mutableStateOf<List<Post>>(emptyList()) }
 
-    // Function to fetch posts from Firebase
     val fetchPosts: () -> Unit = {
         postsRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -60,7 +55,6 @@ fun ListScreen() {
         })
     }
 
-    // Fetch posts when the composable is first launched
     LaunchedEffect(Unit) {
         fetchPosts()
     }
@@ -119,6 +113,16 @@ fun PostCard(post: Post) {
                         color = md_theme_light_secondary
                     )
                 }
+            }
+            post.imageUrl?.let { url ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Image(
+                    painter = rememberImagePainter(data = url),
+                    contentDescription = "Post Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
             }
         }
     }
