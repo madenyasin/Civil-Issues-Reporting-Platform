@@ -136,8 +136,8 @@ fun PostCard(post: Post) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(72.dp)
-                        .clip(RoundedCornerShape(bottomEnd = 8.dp, topEnd = 8.dp))
-                )
+                        .clip(RoundedCornerShape(8.dp)
+                ))
             }
         }
     }
