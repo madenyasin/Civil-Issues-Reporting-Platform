@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.location)
     implementation(libs.firebase.database)
+    implementation(libs.androidx.ui.text.google.fonts)
     androidTestImplementation(platform(libs.compose.bom))
 
     // Jetpack Compose Libraries with BOM version

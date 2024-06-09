@@ -3,12 +3,23 @@ package com.dawinder.btnjc.ui.composables.tabs
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,11 +32,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.dawinder.btnjc.ui.theme.md_theme_light_inversePrimary
-import com.dawinder.btnjc.ui.theme.md_theme_light_onSurface
-import com.dawinder.btnjc.ui.theme.md_theme_light_primary
-import com.dawinder.btnjc.ui.theme.md_theme_light_secondary
-import com.dawinder.btnjc.ui.theme.typography
+import com.example.compose.inversePrimaryLight
+import com.example.compose.primaryLight
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -69,7 +77,7 @@ fun ListScreen() {
             Text(
                 text = "No posts available",
                 style = typography.titleLarge,
-                color = md_theme_light_inversePrimary
+                color = inversePrimaryLight
             )
         } else {
             LazyColumn {
@@ -87,7 +95,7 @@ fun PostCard(post: Post) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .shadow(4.dp, shape =  RoundedCornerShape(16.dp)),
+            .shadow(4.dp, shape = RoundedCornerShape(16.dp)),
         shape = RoundedCornerShape(16.dp),
     ) {
         Row(
@@ -105,7 +113,7 @@ fun PostCard(post: Post) {
                         modifier = Modifier
                             .size(32.dp)
                             .clip(CircleShape)
-                            .border(2.dp, md_theme_light_primary, CircleShape)
+                            .border(2.dp, primaryLight, CircleShape)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                 }
@@ -114,7 +122,7 @@ fun PostCard(post: Post) {
                     Text(
                         text = post.title,
                         style = typography.titleMedium,
-                        color = md_theme_light_primary
+                        color = primaryLight
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     post.latitude?.let { lat ->
@@ -122,7 +130,7 @@ fun PostCard(post: Post) {
                             Text(
                                 text = "Location: $lat, $long",
                                 style = typography.bodySmall,
-                                color = md_theme_light_secondary
+                                color = primaryLight
                             )
                         }
                     }
@@ -136,8 +144,10 @@ fun PostCard(post: Post) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(72.dp)
-                        .clip(RoundedCornerShape(8.dp)
-                ))
+                        .clip(
+                            RoundedCornerShape(8.dp)
+                        )
+                )
             }
         }
     }

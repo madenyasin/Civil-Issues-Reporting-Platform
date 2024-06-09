@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,9 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dawinder.btnjc.R
-import com.dawinder.btnjc.ui.theme.md_theme_light_onPrimary
-import com.dawinder.btnjc.ui.theme.md_theme_light_primary
-import com.dawinder.btnjc.ui.theme.typography
+import com.example.compose.onPrimaryLight
+import com.example.compose.primaryLight
 
 @Composable
 fun SignInScreen(onSignInClick: () -> Unit) {
@@ -49,7 +49,7 @@ fun SignInScreen(onSignInClick: () -> Unit) {
             Text(
                 text = stringResource(id = R.string.app_name), // Replace with your app name resource
                 style = typography.titleLarge,
-                color = md_theme_light_primary,
+                color = primaryLight,
                 modifier = Modifier.padding(bottom = 32.dp)
             )
 
@@ -68,7 +68,7 @@ fun SignInScreen(onSignInClick: () -> Unit) {
                     Text(
                         text = stringResource(id = R.string.sign_in_with_google),
                         style = typography.titleLarge,
-                        color = md_theme_light_onPrimary
+                        color = onPrimaryLight
                     )
                 }
             }

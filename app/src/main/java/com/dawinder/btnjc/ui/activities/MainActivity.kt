@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources.Theme
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -11,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,7 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import com.dawinder.btnjc.R
 import com.dawinder.btnjc.ui.composables.MainScreen
 import com.dawinder.btnjc.ui.data.UserData
-import com.dawinder.btnjc.ui.theme.BottomTabNavigationJetpackComposeTheme
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -98,7 +99,7 @@ class MainActivity : ComponentActivity() {
         checkLocationPermission()
 
         setContent {
-            BottomTabNavigationJetpackComposeTheme {
+            MaterialTheme {
                 val navController = rememberNavController()
                 val userData by viewModel.userData.collectAsState()
                 Surface(modifier = Modifier.fillMaxSize()) {
@@ -221,7 +222,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     //val navController = rememberNavController()
-    BottomTabNavigationJetpackComposeTheme {
+    MaterialTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             //MainScreen(navController = navController)
         }

@@ -14,6 +14,7 @@ google-gms-google-services = "4.4.1"
 firebase-auth = "23.0.0"
 play-services-location = "21.3.0"
 firebase-database = "21.0.0"
+ui-text-google-fonts = "1.6.7"
 
 [libraries]
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
@@ -36,6 +37,7 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebase-auth" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "play-services-location" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebase-database" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "ui-text-google-fonts" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "plugin-android-app" }
