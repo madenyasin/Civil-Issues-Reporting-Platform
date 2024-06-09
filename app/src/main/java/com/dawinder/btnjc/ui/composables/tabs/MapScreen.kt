@@ -6,11 +6,15 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,8 +42,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.dawinder.btnjc.ui.data.UserData
@@ -329,7 +335,7 @@ fun PostDetails(post: Post) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             post.userProfilePictureUrl?.let {
@@ -337,31 +343,46 @@ fun PostDetails(post: Post) {
                     painter = rememberAsyncImagePainter(model = it),
                     contentDescription = "User Profile Picture",
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
-            Text(text = "Posted by: ${post.userName}", style = MaterialTheme.typography.bodySmall)
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        post.imageUrl?.let {
-            Image(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape(8.dp)),
-                painter = rememberAsyncImagePainter(model = it),
-                contentDescription = "Post Image",
-                contentScale = ContentScale.FillWidth,
+            Text(
+                text = "Posted by: ${post.userName}",
+                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
             )
         }
-        Column (modifier = Modifier
-            .padding(top = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Spacer(modifier = Modifier.height(16.dp))
+        post.imageUrl?.let {
+            Image(
+                painter = rememberAsyncImagePainter(model = it),
+                contentDescription = "Post Image",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .shadow(2.dp, RoundedCornerShape(8.dp))
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = post.title, style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold))
+            Text(
+                text = post.title,
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                textAlign = TextAlign.Center
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = post.description, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = post.description,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
         }
     }
 }
