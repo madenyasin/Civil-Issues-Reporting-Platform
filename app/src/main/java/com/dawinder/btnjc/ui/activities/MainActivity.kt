@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setServerClientId(getString(R.string.your_web_client_id)) // Replace with your server client ID
-                    .setFilterByAuthorizedAccounts(true)
+                    .setFilterByAuthorizedAccounts(false)
                     .build()
             )
             .build()

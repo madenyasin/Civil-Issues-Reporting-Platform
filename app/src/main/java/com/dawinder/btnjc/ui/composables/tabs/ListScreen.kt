@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.dawinder.btnjc.ui.theme.md_theme_light_inversePrimary
@@ -83,57 +84,51 @@ fun PostCard(post: Post) {
             .fillMaxWidth()
             .padding(8.dp)
     ) {
-        Column(
+
+
+
+        Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                post.userProfilePictureUrl?.let {
-                    Image(
-                        painter = rememberAsyncImagePainter(model = it),
-                        contentDescription = "User Profile Picture",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                }
-                Text(
-                    text = "Posted by: ${post.userName}",
-                    style = typography.bodySmall,
-                    color = md_theme_light_secondary
+
+            post.userProfilePictureUrl?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(model = it),
+                    contentDescription = "User Profile Picture",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = post.title,
-                style = typography.titleMedium,
-                color = md_theme_light_primary
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = post.description,
-                style = typography.bodyLarge,
-                color = md_theme_light_onSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            post.latitude?.let { lat ->
-                post.longitude?.let { long ->
-                    Text(
-                        text = "Location: $lat, $long",
-                        style = typography.bodySmall,
-                        color = md_theme_light_secondary
-                    )
+
+            Column {
+                Text(
+                    text = post.title,
+                    style = typography.titleMedium,
+                    color = md_theme_light_primary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                post.latitude?.let { lat ->
+                    post.longitude?.let { long ->
+                        Text(
+                            text = "Location: $lat, $long",
+                            style = typography.bodySmall,
+                            color = md_theme_light_secondary
+                        )
+                    }
                 }
             }
+
+
             post.imageUrl?.let { url ->
-                Spacer(modifier = Modifier.height(8.dp))
                 Image(
                     painter = rememberAsyncImagePainter(model = url),
                     contentDescription = "Post Image",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
+                        .size(64.dp)
                 )
             }
         }
